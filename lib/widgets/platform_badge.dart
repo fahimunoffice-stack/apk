@@ -9,7 +9,7 @@ class PlatformBadge extends StatelessWidget {
     final p = (platform ?? 'messenger').toLowerCase();
     final (icon, color, label) = switch (p) {
       'instagram' => (Icons.camera_alt, const Color(0xFFE1306C), 'IG'),
-      'whatsapp' => (Icons.whatsapp, const Color(0xFF25D366), 'WA'),
+      'whatsapp' => (Icons.chat, const Color(0xFF25D366), 'WA'),
       _ => (Icons.message, const Color(0xFF1877F2), 'MSG'),
     };
 
