@@ -18,18 +18,25 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Ensure Android project exists
-        run: flutter create --platforms=android --org=com.softism.botmanager --project-name=softism_bot_manager .
+      - name: Create clean Flutter app workspace
+        run: |
+          rm -rf __build_app
+          flutter create -t app --platforms=android --org=com.softism.botmanager --project-name=softism_bot_manager __build_app
+          cp pubspec.yaml __build_app/pubspec.yaml
+          rm -rf __build_app/lib
+          cp -R lib __build_app/lib
 
       - name: Flutter Pub Get
+        working-directory: __build_app
         run: flutter pub get
 
       - name: Build Debug APK
+        working-directory: __build_app
         run: flutter build apk --debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: __build_app/build/app/outputs/flutter-apk/app-debug.apk
 
