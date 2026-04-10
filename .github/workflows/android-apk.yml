@@ -27,29 +27,20 @@ jobs:
           rm -rf __build_app/lib
           cp -R lib __build_app/lib
 
-      - name: Debug: show workspace
-        shell: bash
-        working-directory: .
-        run: |
-          echo "ROOT PWD=$(pwd)"
-          ls -la
-          echo "--- __build_app exists? ---"
-          ls -la __build_app || true
-          echo "--- __build_app/android ---"
-          ls -la __build_app/android || true
-          echo "--- flutter ---"
-          flutter --version
-          flutter doctor -v || true
-
       - name: Flutter Pub Get
-        shell: bash
-        working-directory: __build_app
-        run: flutter pub get
+        run: |
+          set -euxo pipefail
+          cd __build_app
+          pwd
+          ls -la
+          ls -la android
+          flutter --version
+          flutter pub get
 
       - name: Build Debug APK
-        shell: bash
-        working-directory: __build_app
         run: |
+          set -euxo pipefail
+          cd __build_app
           pwd
           ls -la
           ls -la android
