@@ -18,6 +18,9 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Ensure Android project exists
+        run: flutter create --platforms=android --org=com.softism.botmanager --project-name=softism_bot_manager .
+
       - name: Flutter Pub Get
         run: flutter pub get
 
