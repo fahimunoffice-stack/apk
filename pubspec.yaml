@@ -1,0 +1,51 @@
+name: softism_bot_manager
+description: Softism Bot Manager — unified control center for Messenger/WhatsApp/Instagram automation, chat, orders, and settings.
+publish_to: "none"
+
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Backend
+  supabase_flutter: ^2.9.1
+
+  # State + navigation
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.8.1
+
+  # Onboarding prefs
+  shared_preferences: ^2.3.2
+
+  # Notifications (local)
+  flutter_local_notifications: ^17.2.3
+
+  # UI helpers
+  intl: ^0.19.0
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  timeago: ^3.7.0
+  flutter_slidable: ^3.1.1
+
+  # Actions
+  url_launcher: ^6.3.1
+
+  # Media sending
+  image_picker: ^1.1.2
+  photo_view: ^0.15.0
+
+  # Fonts
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
