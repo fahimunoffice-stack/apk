@@ -8,10 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: __build_app
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,20 +28,32 @@ jobs:
           cp -R lib __build_app/lib
 
       - name: Debug: show workspace
+        shell: bash
+        working-directory: .
         run: |
-          echo "PWD=$(pwd)"
+          echo "ROOT PWD=$(pwd)"
           ls -la
-          echo "--- android ---"
-          ls -la android
+          echo "--- __build_app exists? ---"
+          ls -la __build_app || true
+          echo "--- __build_app/android ---"
+          ls -la __build_app/android || true
           echo "--- flutter ---"
           flutter --version
           flutter doctor -v || true
 
       - name: Flutter Pub Get
+        shell: bash
+        working-directory: __build_app
         run: flutter pub get
 
       - name: Build Debug APK
-        run: flutter build apk --debug -v
+        shell: bash
+        working-directory: __build_app
+        run: |
+          pwd
+          ls -la
+          ls -la android
+          flutter build apk --debug -v
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
