@@ -24,6 +24,18 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Install Android NDK (required by plugins)
+        run: |
+          set -euxo pipefail
+          # Ensure sdkmanager is available
+          yes | "${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin/sdkmanager" --licenses || true
+          "${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "ndk;28.2.13676358" \
+            "cmake;3.22.1"
+
       - name: Create clean Flutter app workspace
         working-directory: .
         run: |
@@ -50,18 +62,36 @@ jobs:
           pwd
           ls -la
           ls -la android
-          flutter build apk --debug -v || (
-            echo "Flutter build failed. Dumping Gradle diagnostics..." ;
-            cd android ;
-            chmod +x ./gradlew || true ;
-            ./gradlew --version || true ;
-            ./gradlew assembleDebug --stacktrace --info ;
-            exit 1
-          )
+          flutter build apk --debug -v
+
+      - name: Gradle diagnostics (always)
+        if: ${{ always() }}
+        run: |
+          set -euxo pipefail
+          cd __build_app/android
+          chmod +x ./gradlew || true
+          ./gradlew --version || true
+          # Even if flutter succeeded, we want a stable error log when it didn't.
+          ./gradlew :app:assembleDebug --stacktrace --info --warning-mode all || true
+          # Print the most important part if it exists
+          if [ -f app/build/outputs/logs/manifest-merger-debug-report.txt ]; then
+            echo "--- manifest merger report ---"
+            tail -n 200 app/build/outputs/logs/manifest-merger-debug-report.txt || true
+          fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: __build_app/build/app/outputs/flutter-apk/app-debug.apk
+
+      - name: Upload Gradle problems report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-reports
+          path: |
+            __build_app/build/reports/**
+            __build_app/android/build/reports/**
+            __build_app/android/app/build/reports/**
 
